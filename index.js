@@ -4,6 +4,8 @@ const express = require('express');
 const dotenv = require('dotenv').config();
 const {connectDB} = require('./config/db');
 const {errorHandler} = require('./middleware/errorMiddleware');
+const {connectDBMongo} = require('./config/dbConnection');
+
 const server = http.createServer((req, res) => {
   res.writeHead(200, { 'Content-Type': 'text/plain' });
   res.end('Hello, Elena!\n');
