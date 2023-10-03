@@ -1,26 +1,16 @@
-//index.js
-const http = require('http');
 const express = require('express');
 const dotenv = require('dotenv').config();
-const {connectDB} = require('./config/db');
+const { connectDB }= require('./config/db');
+const port = process.env.PORT ||5000;
 const {errorHandler} = require('./middleware/errorMiddleware');
-const {connectDBMongo} = require('./config/dbConnection');
-
-const server = http.createServer((req, res) => {
-  res.writeHead(200, { 'Content-Type': 'text/plain' });
-  res.end('Hello, Elena!\n');
-});
-
-const port = process.env.PORT || 3000;
 connectDB();
 const app = express();
-app.use(express.json);
+
+app.use(express.json());
 app.use(express.urlencoded({extended: false}))
+app.use(errorHandler)
+      
+app.use('/api/stations/',require('./routes/stationsRoutes'))
 
-const { Client } = require('@elastic/elasticsearch')
-const client = new Client({ node: 'http://localhost:9200' })
 
-
-server.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
-});
+app.listen(port, ()=>console.log(`Starting server on port ${port}`));
