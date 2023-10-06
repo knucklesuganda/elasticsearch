@@ -2,7 +2,8 @@
 const asyncHandler = require('express-async-handler');
 const mongoose = require('mongoose');
 
-const Station = require('../models/stationModel')
+const Station = require('../models/stationModel');
+const { stationElasticService } = require('../models/elasticSearch');
 
 
 // @desc GET Station info
@@ -75,6 +76,39 @@ const createOrUpdateStation = asyncHandler(async (req, res) => {
     res.status(200).json(stations)
 })
 
+
+const searchStation = asyncHandler(async (req, res) => {
+    // http://localhost:5000/api/stations/search?query=abcde
+
+
+    // http://localhost:5000/api/stations/search?name=abcde&address=Wall%20Street&operation=should
+    // http://localhost:5000/api/stations/search?query=[{"field": "Name", "value": "My name", }]
+
+    let queryPart;
+
+    if(req.params.operation == 'should'){
+        queryPart = {
+            should: [     // or ||
+                { term: { Name: req.params.name } },
+                { match: { Address: req.params.address } },
+            ],
+        }
+    }else if(req.params.operation == 'must'){
+        queryPart = {
+            must: [     // and &&
+                { term: { Name: req.params.name } },
+                { match: { Address: req.params.address } },
+            ],
+        }
+    }
+
+    await stationElasticService.findDocuments({
+        bool: {
+                
+        }
+    });
+
+});
 
 
 // @desc GEt Station record by Id

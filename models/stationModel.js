@@ -1,5 +1,6 @@
 
 const mongoose = require('mongoose');
+const { stationElasticService } = require('./elasticSearch');
 
 const stationModel = mongoose.Schema({
     fid:{
@@ -31,5 +32,21 @@ const stationModel = mongoose.Schema({
 }, {
     timepstamps: true,
 })
+
+
+stationElasticService.createIndex({
+    "properties": {
+        "fid": {
+            "type": "integer"
+        },
+        "price": {
+            "type": "float"
+        },
+        "category": {
+            "type": "keyword"
+        }
+    }
+})
+
 
 module.exports = mongoose.model('station', stationModel);
